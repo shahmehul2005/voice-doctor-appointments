@@ -1,0 +1,54 @@
+export const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:7860").replace(/\/$/, "");
+export const TRANSPORT: "webrtc" | "websocket" =
+  import.meta.env.VITE_TRANSPORT === "websocket" ? "websocket" : "webrtc";
+
+export type Slot = { starts_at: string; minutes: number; booked: boolean };
+export type Doctor = { id: string; name: string; speciality: string; room: string; slots: Slot[] };
+export type Appointment = {
+  id: string;
+  doctor_id: string;
+  doctor_name: string;
+  speciality: string;
+  room: string;
+  patient_name: string;
+  phone_masked: string;
+  starts_at: string;
+  status: "booked" | "cancelled";
+  source: "voice" | "seed";
+  created_at: string;
+  cancelled_at: string | null;
+};
+
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`);
+  if (!res.ok) throw new Error(`${path} → ${res.status}`);
+  return res.json();
+}
+
+export const fetchHealth = () => get<{ ok: boolean; voice_ready: boolean; active_calls: number }>("/api/health");
+export const fetchDoctors = () => get<{ now: string; doctors: Doctor[] }>("/api/doctors");
+export const fetchAppointments = () => get<{ appointments: Appointment[] }>("/api/appointments");
+
+// ---------- formatting (all times are clinic-local strings, no TZ juggling) ----------
+
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+export const parseLocal = (s: string) => {
+  const [d, t = "00:00"] = s.split("T");
+  const [y, m, day] = d.split("-").map(Number);
+  const [h, min] = t.split(":").map(Number);
+  return new Date(y, m - 1, day, h, min);
+};
+
+export const dayKey = (s: string) => s.slice(0, 10);
+export const fmtTime = (s: string) => s.slice(11, 16);
+export const fmtDayShort = (key: string) => {
+  const d = parseLocal(key);
+  return { dow: DAYS[d.getDay()], day: d.getDate(), month: MONTHS[d.getMonth()] };
+};
+export const fmtDayLong = (key: string) => {
+  const { dow, day, month } = fmtDayShort(key);
+  return `${dow} ${day} ${month}`;
+};
+export const shortDoctor = (name: string) => name.replace(/^Dr\.\s+\S+\s+/, "Dr. ");

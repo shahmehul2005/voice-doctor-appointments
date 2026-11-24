@@ -1,0 +1,20 @@
+# secrets
+.env
+.env.local
+*.env.local
+
+# python
+__pycache__/
+*.pyc
+.venv/
+server/data/
+
+# node
+node_modules/
+web/dist/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.tsbuildinfo
