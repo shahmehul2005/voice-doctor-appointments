@@ -24,6 +24,8 @@ from pipecat.services.elevenlabs.tts import ElevenLabsTTSService
 from pipecat.services.google.llm import GoogleLLMService
 from pipecat.services.llm_service import FunctionCallParams
 from pipecat.transports.base_transport import BaseTransport
+from pipecat.turns.user_stop import SpeechTimeoutUserTurnStopStrategy
+from pipecat.turns.user_turn_strategies import UserTurnStrategies
 from pipecat.workers.runner import WorkerRunner
 
 from . import db, tools
@@ -85,6 +87,13 @@ Calendar:
 Doctors:
 {doctors}
 """
+
+
+def _turn_strategies() -> UserTurnStrategies | None:
+    """None keeps Pipecat's default (Smart Turn model); "vad" skips it to save RAM/CPU."""
+    if settings.turn_detection != "vad":
+        return None
+    return UserTurnStrategies(stop=[SpeechTimeoutUserTurnStopStrategy(user_speech_timeout=0.8)])
 
 
 FILLERS = ["One moment.", "Let me check.", "Sure, one second."]
@@ -196,7 +205,7 @@ async def run_bot(transport: BaseTransport, session_id: str) -> None:
     context = LLMContext(tools=[check_doctor_availability, book_appointment, cancel_appointment])
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
         context,
-        user_params=LLMUserAggregatorParams(vad_analyzer=SileroVADAnalyzer()),
+        user_params=LLMUserAggregatorParams(vad_analyzer=SileroVADAnalyzer(), user_turn_strategies=_turn_strategies()),
     )
 
     @llm.event_handler("on_function_calls_started")

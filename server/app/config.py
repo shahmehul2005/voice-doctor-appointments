@@ -34,6 +34,9 @@ class Settings:
     )
     max_sessions: int = field(default_factory=lambda: _int("MAX_SESSIONS", 3))
     max_call_secs: int = field(default_factory=lambda: _int("MAX_CALL_SECS", 600))
+    # "smart": Pipecat's Smart Turn model decides when the caller finished (best, ~+150 MB RAM).
+    # "vad": Silero VAD + a short silence timeout. Use on small hosts (512 MB / shared CPU).
+    turn_detection: str = field(default_factory=lambda: (os.getenv("TURN_DETECTION", "").strip().lower() or "smart"))
     ice_servers: list[dict] = field(
         default_factory=lambda: json.loads(os.getenv("ICE_SERVERS") or '[{"urls": "stun:stun.l.google.com:19302"}]')
     )
