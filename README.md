@@ -96,7 +96,9 @@ cloudflared tunnel --protocol http2 --url http://localhost:7860   # prints https
 
 Then open the dashboard with `?api=<tunnel-url>&transport=websocket` appended. The dashboard remembers the URL, and `?api=reset` clears it. This lets the Vercel build point at a new tunnel without a rebuild. The tunnel only works while your machine and the command are running.
 
-**Server, always on:** `server/Dockerfile` runs on any container host (Render, Railway, Fly, Cloud Run). Set the same variables as in `.env`, plus `CORS_ORIGINS=https://<your-app>.vercel.app`. Most container hosts don't allow inbound UDP, so use `VITE_TRANSPORT=websocket` or add a TURN server through `ICE_SERVERS`. Hugging Face Docker Spaces now need a paid plan.
+**Server, always on (recommended: Railway):** create a project from this GitHub repo and set **Root Directory** to `server`. Railway picks up `server/railway.json` and the Dockerfile. Add the variables from `.env.example`, then generate a public domain under Settings → Networking. The server needs roughly 400–600 MB of RAM (Silero VAD and the turn model run in-process), so 512 MB free tiers are too tight.
+
+`server/Dockerfile` also runs on any other container host (Render paid, Fly, Cloud Run). Set the same variables as in `.env`, plus `CORS_ORIGINS=https://<your-app>.vercel.app`. Most container hosts don't allow inbound UDP, so use `VITE_TRANSPORT=websocket` or add a TURN server through `ICE_SERVERS`. Hugging Face Docker Spaces now need a paid plan.
 
 ## Development
 
