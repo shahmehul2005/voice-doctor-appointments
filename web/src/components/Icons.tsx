@@ -35,14 +35,6 @@ export const MicOffIcon = ({ size, className }: P) => (
   </svg>
 );
 
-export const LeafMark = ({ size = 22, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 32 32" className={className} aria-hidden>
-    <rect width="32" height="32" rx="9" fill="var(--forest)" />
-    <path d="M16 6c5 4 7 8 7 12a7 7 0 0 1-14 0c0-4 2-8 7-12Z" fill="var(--paper)" />
-    <path d="M16 12v14" stroke="var(--forest)" strokeWidth="1.6" strokeLinecap="round" />
-  </svg>
-);
-
 export const CheckIcon = ({ size, className }: P) => (
   <svg {...base(size)} className={className}>
     <path d="m5 12.5 4.5 4.5L19 7.5" />
@@ -80,4 +72,51 @@ export const StatusBar = ({ time }: { time: string }) => (
       </svg>
     </span>
   </div>
+);
+
+export const CalendarIcon = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+    <path d="M3.5 10h17M8 3v4M16 3v4" />
+  </svg>
+);
+
+export const ListIcon = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" />
+  </svg>
+);
+
+export const HeadsetIcon = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+    <rect x="3.5" y="13.5" width="4" height="6" rx="1.5" />
+    <rect x="16.5" y="13.5" width="4" height="6" rx="1.5" />
+    <path d="M20 19.5a3 3 0 0 1-3 2.5h-3" />
+  </svg>
+);
+
+export const ChevronLeft = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="m15 6-6 6 6 6" />
+  </svg>
+);
+
+export const ChevronRight = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="m9 6 6 6-6 6" />
+  </svg>
+);
+
+export const ActivityIcon = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M3 12h4l2.5-6 5 12 2.5-6h4" />
+  </svg>
+);
+
+export const ClinicMark = ({ size = 28 }: P) => (
+  <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+    <rect width="28" height="28" rx="7" fill="var(--brand)" />
+    <path d="M11.5 7.5h5v4.5H21v5h-4.5v4.5h-5V17H7v-5h4.5z" fill="#fff" />
+  </svg>
 );

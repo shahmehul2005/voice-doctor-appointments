@@ -70,7 +70,17 @@ def _can_take_call() -> str | None:
 
 @app.get("/api/health")
 async def health():
-    return {"ok": True, "voice_ready": not settings.missing(), "active_calls": len(_sessions)}
+    return {
+        "ok": True,
+        "voice_ready": not settings.missing(),
+        "active_calls": len(_sessions),
+        "max_calls": settings.max_sessions,
+        "models": {
+            "stt": "ElevenLabs Scribe v2 Realtime",
+            "llm": settings.gemini_model,
+            "tts": f"ElevenLabs {settings.elevenlabs_tts_model}",
+        },
+    }
 
 
 @app.get("/api/doctors")

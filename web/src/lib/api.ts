@@ -35,7 +35,14 @@ async function get<T>(path: string): Promise<T> {
   return res.json();
 }
 
-export const fetchHealth = () => get<{ ok: boolean; voice_ready: boolean; active_calls: number }>("/api/health");
+export type Health = {
+  ok: boolean;
+  voice_ready: boolean;
+  active_calls: number;
+  max_calls: number;
+  models?: { stt: string; llm: string; tts: string };
+};
+export const fetchHealth = () => get<Health>("/api/health");
 export const fetchDoctors = () => get<{ now: string; doctors: Doctor[] }>("/api/doctors");
 export const fetchAppointments = () => get<{ appointments: Appointment[] }>("/api/appointments");
 
@@ -62,3 +69,27 @@ export const fmtDayLong = (key: string) => {
   return `${dow} ${day} ${month}`;
 };
 export const shortDoctor = (name: string) => name.replace(/^Dr\.\s+\S+\s+/, "Dr. ");
+
+const LONG_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const LONG_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "Thursday, 26 November" */
+export const fmtDayFull = (key: string) => {
+  const d = parseLocal(key);
+  return `${LONG_DAYS[d.getDay()]}, ${d.getDate()} ${LONG_MONTHS[d.getMonth()]}`;
+};
+
+/** "14:30" -> "2:30 PM" */
+export const fmt12 = (hhmm: string) => {
+  const [h, m] = hhmm.slice(0, 5).split(":").map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+};
+
+export const initials = (name: string) =>
+  name
+    .replace(/^Dr\.?\s+/i, "")
+    .split(/\s+/)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();

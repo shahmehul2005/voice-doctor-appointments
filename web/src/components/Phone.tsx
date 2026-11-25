@@ -9,8 +9,8 @@ type Call = ReturnType<typeof useCall>;
 
 const TOOL_LABEL: Record<string, [string, string]> = {
   check_doctor_availability: ["Checking the schedule", "Checked the schedule"],
-  book_appointment: ["Booking", "Booking processed"],
-  cancel_appointment: ["Cancelling", "Cancellation processed"],
+  book_appointment: ["Booking", "Booking tool ran"],
+  cancel_appointment: ["Cancelling", "Cancel tool ran"],
 };
 
 const clock = (ms: number) => {

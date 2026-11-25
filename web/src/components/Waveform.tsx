@@ -53,7 +53,7 @@ export function Waveform({ levels, active, bars = 44 }: { levels: Levels; active
         const y = (h - bh) / 2;
         const fade = 0.25 + 0.75 * (i / bars);
         ctx.globalAlpha = fade;
-        ctx.fillStyle = b.v < 0.05 ? "rgba(242,239,230,0.35)" : b.who === "agent" ? "#7fd1a4" : "#f2efe6";
+        ctx.fillStyle = b.v < 0.05 ? "rgba(255,255,255,0.22)" : b.who === "agent" ? "#5cc8b8" : "#e4e7ec";
         ctx.beginPath();
         ctx.roundRect(x, y, bw, bh, bw / 2);
         ctx.fill();
