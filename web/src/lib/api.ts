@@ -1,6 +1,16 @@
-export const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:7860").replace(/\/$/, "");
+// The server URL can be overridden at runtime with ?api=https://... (remembered in
+// localStorage), so a deployed dashboard can point at a new tunnel without a rebuild.
+function resolveApiUrl(): string {
+  const fromQuery = new URLSearchParams(location.search).get("api");
+  if (fromQuery && /^https?:\/\//.test(fromQuery)) localStorage.setItem("api_url", fromQuery);
+  if (fromQuery === "reset") localStorage.removeItem("api_url");
+  return (localStorage.getItem("api_url") || import.meta.env.VITE_API_URL || "http://localhost:7860").replace(/\/$/, "");
+}
+
+export const API_URL = resolveApiUrl();
+const transportParam = new URLSearchParams(location.search).get("transport");
 export const TRANSPORT: "webrtc" | "websocket" =
-  import.meta.env.VITE_TRANSPORT === "websocket" ? "websocket" : "webrtc";
+  (transportParam || import.meta.env.VITE_TRANSPORT) === "websocket" ? "websocket" : "webrtc";
 
 export type Slot = { starts_at: string; minutes: number; booked: boolean };
 export type Doctor = { id: string; name: string; speciality: string; room: string; slots: Slot[] };

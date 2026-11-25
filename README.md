@@ -87,7 +87,16 @@ The dashboard is a static Vite build, so it runs on Vercel. The voice server is 
 | `VITE_API_URL` | public HTTPS URL of the server |
 | `VITE_TRANSPORT` | `webrtc`, or `websocket` if your host blocks UDP |
 
-**Server:** `server/Dockerfile` runs on any container host (Hugging Face Spaces with Docker, Render, Railway, Fly). Set the same variables as in `.env`, plus `CORS_ORIGINS=https://<your-app>.vercel.app`. Most container hosts don't allow inbound UDP. On those, either set `VITE_TRANSPORT=websocket` or add a TURN server through `ICE_SERVERS`.
+**Server, quickest option (no account):** run the server locally and expose it with a Cloudflare quick tunnel:
+
+```bash
+uvicorn app.main:app --port 7860
+cloudflared tunnel --protocol http2 --url http://localhost:7860   # prints https://<random>.trycloudflare.com
+```
+
+Then open the dashboard with `?api=<tunnel-url>&transport=websocket` appended. The dashboard remembers the URL, and `?api=reset` clears it. This lets the Vercel build point at a new tunnel without a rebuild. The tunnel only works while your machine and the command are running.
+
+**Server, always on:** `server/Dockerfile` runs on any container host (Render, Railway, Fly, Cloud Run). Set the same variables as in `.env`, plus `CORS_ORIGINS=https://<your-app>.vercel.app`. Most container hosts don't allow inbound UDP, so use `VITE_TRANSPORT=websocket` or add a TURN server through `ICE_SERVERS`. Hugging Face Docker Spaces now need a paid plan.
 
 ## Development
 
